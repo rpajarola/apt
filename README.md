@@ -4,8 +4,8 @@ A signed apt repository for Debian and Ubuntu (amd64, arm64), served from
 GitHub Pages at <https://rpajarola.github.io/apt>, with the packages of:
 
 - [gobootd](https://github.com/rpajarola/gobootd/releases): boot server for old and unusual machines
-- [tme](https://github.com/rpajarola/tme/releases): The Machine Emulator (Sun-2, Sun-3, Sun-4c, UltraSPARC)
-- [gxemul](https://github.com/rpajarola/gxemul/releases): GXemul, with SIMH tapes, TURBOchannel ROMs and L2TPv3
+- [tme-rp](https://github.com/rpajarola/tme/releases): The Machine Emulator (Sun-2, Sun-3, Sun-4c, UltraSPARC)
+- [gxemul-rp](https://github.com/rpajarola/gxemul/releases): GXemul, with SIMH tapes, TURBOchannel ROMs and L2TPv3
 
 ## Use
 
@@ -14,7 +14,7 @@ sudo curl -fsSLo /usr/share/keyrings/rpajarola.gpg https://rpajarola.github.io/a
 echo "deb [signed-by=/usr/share/keyrings/rpajarola.gpg] https://rpajarola.github.io/apt stable main" \
   | sudo tee /etc/apt/sources.list.d/rpajarola.list
 sudo apt update
-sudo apt install gobootd tme gxemul
+sudo apt install gobootd tme-rp gxemul-rp
 ```
 
 The packages are built on Ubuntu 24.04.
@@ -34,8 +34,8 @@ the repository, and deploys it to GitHub Pages. It runs:
 - by hand (Actions → publish → Run workflow), e.g. after changing a
   release's assets.
 
-To add a project, add it to `sources.txt` and give its release workflow
-the same `apt` job as gobootd's.
+To add a project, add it and its package name to `sources.txt`, and give
+its release workflow the same `apt` job as gobootd's.
 
 ## One-time setup
 

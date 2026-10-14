@@ -33,11 +33,11 @@ jobs:
         run: |
           [ -n "$FROM" ] && echo "triggered by a release of $FROM"
           mkdir debs
-          grep -v '^#' sources.txt | while read -r repo; do
+          grep -v '^#' sources.txt | while read -r repo pkg; do
             [ -n "$repo" ] || continue
             gh release list -R "$repo" --limit 1000 --exclude-drafts --json tagName --jq '.[].tagName' |
               while read -r tag; do
-                gh release download "$tag" -R "$repo" --pattern '*.deb' --dir debs || echo "no .debs in $repo $tag"
+                gh release download "$tag" -R "$repo" --pattern "${pkg}_*.deb" --dir debs || echo "no $pkg .debs in $repo $tag"
               done
           done
           ls -l debs

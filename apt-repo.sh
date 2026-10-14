@@ -18,6 +18,7 @@ if [ $# -ne 2 ] || [ -z "${GPG_KEY_ID:-}" ]; then
 fi
 DEB_DIR="$(cd "$1" && pwd)"
 OUT="$2"
+SOURCES="$(cd "$(dirname "$0")" && pwd)/sources.txt"
 
 NAME=rpajarola
 SUITE=stable
@@ -70,7 +71,7 @@ packages=$(for arch in $ARCHES; do
   awk '/^Package:/ {p=$2} /^Version:/ {print p, $2}' "dists/$SUITE/$COMPONENT/binary-$arch/Packages"
 done | sort -u -k1,1 -k2,2V | awk '{v[$1]=$2} END {for (p in v) print p, v[p]}' | sort)
 
-# Each package links to the releases of the repository of the same name.
+# Each package links to the repository that builds it, from sources.txt.
 {
   cat <<HTML
 <!doctype html>
@@ -112,7 +113,9 @@ done | sort -u -k1,1 -k2,2V | awk '{v[$1]=$2} END {for (p in v) print p, v[p]}' 
 <table>
 HTML
   while read -r p v; do
-    echo "<tr><td><a href=\"https://github.com/rpajarola/$p\">$p</a></td><td class=\"v\">$v</td><td class=\"r\"><a href=\"https://github.com/rpajarola/$p/releases\">releases</a></td></tr>"
+    repo=$(awk -v p="$p" '!/^#/ && $2 == p {print $1; exit}' "$SOURCES")
+    repo=${repo:-rpajarola/$p}
+    echo "<tr><td><a href=\"https://github.com/$repo\">$p</a></td><td class=\"v\">$v</td><td class=\"r\"><a href=\"https://github.com/$repo/releases\">releases</a></td></tr>"
   done <<< "$packages"
   cat <<HTML
 </table>

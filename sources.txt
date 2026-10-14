@@ -1,5 +1,7 @@
-# GitHub repositories whose releases' .deb assets go into the apt
-# repository, one per line.
-rpajarola/gobootd
-rpajarola/tme
-rpajarola/gxemul
+# The GitHub repositories whose releases' .deb assets go into the apt
+# repository, one per line, with the name of the package each builds.
+# Only .debs of that package are taken, so older releases built under
+# another name (tme and gxemul before 1.0.0) are left out.
+rpajarola/gobootd gobootd
+rpajarola/tme tme-rp
+rpajarola/gxemul gxemul-rp
