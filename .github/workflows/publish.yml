@@ -1,0 +1,71 @@
+# Publishes the signed apt repository to GitHub Pages, with the .deb assets
+# of every release of the repositories in sources.txt. The projects'
+# release workflows trigger it (repository_dispatch); it also runs by hand
+# and once a week. See README.md for the one-time setup.
+name: publish
+
+on:
+  repository_dispatch:
+    types: [release]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the .debs of all releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FROM: ${{ github.event.client_payload.repository }}
+        run: |
+          [ -n "$FROM" ] && echo "triggered by a release of $FROM"
+          mkdir debs
+          grep -v '^#' sources.txt | while read -r repo; do
+            [ -n "$repo" ] || continue
+            gh release list -R "$repo" --limit 1000 --exclude-drafts --json tagName --jq '.[].tagName' |
+              while read -r tag; do
+                gh release download "$tag" -R "$repo" --pattern '*.deb' --dir debs || echo "no .debs in $repo $tag"
+              done
+          done
+          ls -l debs
+
+      - name: Import the signing key
+        env:
+          APT_SIGNING_KEY: ${{ secrets.APT_SIGNING_KEY }}
+        run: |
+          echo "$APT_SIGNING_KEY" | gpg --batch --import
+          fpr=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr:/ {print $10; exit}')
+          echo "GPG_KEY_ID=$fpr" >> "$GITHUB_ENV"
+
+      - name: Build the repository
+        run: |
+          command -v apt-ftparchive || sudo apt-get install -y apt-utils
+          ./apt-repo.sh debs site
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

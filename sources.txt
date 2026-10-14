@@ -1,0 +1,5 @@
+# GitHub repositories whose releases' .deb assets go into the apt
+# repository, one per line.
+rpajarola/gobootd
+rpajarola/tme
+rpajarola/gxemul
