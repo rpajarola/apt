@@ -70,20 +70,53 @@ packages=$(for arch in $ARCHES; do
   awk '/^Package:/ {p=$2} /^Version:/ {print p, $2}' "dists/$SUITE/$COMPONENT/binary-$arch/Packages"
 done | sort -u -k1,1 -k2,2V | awk '{v[$1]=$2} END {for (p in v) print p, v[p]}' | sort)
 
+# Each package links to the releases of the repository of the same name.
 {
   cat <<HTML
 <!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<title>rpajarola apt repository</title>
-<h1>rpajarola apt repository</h1>
-<p>Debian and Ubuntu packages (amd64, arm64) for:</p>
-<ul>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$NAME apt repository</title>
+<style>
+  :root { --bg: #f6f3ec; --fg: #1f1d1a; --muted: #6b665d; --card: #fffdf8; --line: #e2dccf; --accent: #b5530f; --code-bg: #efe9dc; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12110f; --fg: #ece6da; --muted: #9a9284; --card: #1b1a17; --line: #2e2b26; --accent: #f0a04b; --code-bg: #0c0b0a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 16px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .home { font-size: 14px; }
+  h1 { font-size: 32px; line-height: 1.15; margin: 16px 0 8px; letter-spacing: -.01em; }
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 32px 0 12px; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  td { padding: 10px 14px; border-top: 1px solid var(--line); }
+  tr:first-child td { border-top: 0; }
+  td.v { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; color: var(--muted); }
+  td.r { text-align: right; white-space: nowrap; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; }
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+<a class="home" href="https://rpajarola.github.io/">&larr; rpajarola.github.io</a>
+<h1>$NAME apt repository</h1>
+<p class="muted">Signed Debian and Ubuntu packages, for amd64 and arm64.</p>
+<h2>Packages</h2>
+<table>
 HTML
   while read -r p v; do
-    echo "<li><a href=\"https://github.com/rpajarola/$p\">$p</a> $v</li>"
+    echo "<tr><td><a href=\"https://github.com/rpajarola/$p\">$p</a></td><td class=\"v\">$v</td><td class=\"r\"><a href=\"https://github.com/rpajarola/$p/releases\">releases</a></td></tr>"
   done <<< "$packages"
   cat <<HTML
-</ul>
+</table>
+<h2>Use</h2>
 <pre>
 sudo curl -fsSLo /usr/share/keyrings/$NAME.gpg $url/$NAME.gpg
 echo "deb [signed-by=/usr/share/keyrings/$NAME.gpg] $url $SUITE $COMPONENT" \\
@@ -91,7 +124,12 @@ echo "deb [signed-by=/usr/share/keyrings/$NAME.gpg] $url $SUITE $COMPONENT" \\
 sudo apt update
 sudo apt install $(echo "$packages" | awk '{print $1}' | paste -sd' ' -)
 </pre>
-<p>Source: <a href="https://github.com/rpajarola/apt">github.com/rpajarola/apt</a></p>
+<p>The public key is also available <a href="$NAME.asc">armored</a>. On macOS, use the
+<a href="https://github.com/rpajarola/homebrew-tap">Homebrew tap</a>.</p>
+<footer>Source: <a href="https://github.com/rpajarola/apt">github.com/rpajarola/apt</a></footer>
+</main>
+</body>
+</html>
 HTML
 } > index.html
 

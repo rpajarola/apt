@@ -3,9 +3,9 @@
 A signed apt repository for Debian and Ubuntu (amd64, arm64), served from
 GitHub Pages at <https://rpajarola.github.io/apt>, with the packages of:
 
-- [gobootd](https://github.com/rpajarola/gobootd): boot server for old and unusual machines
-- [tme](https://github.com/rpajarola/tme): The Machine Emulator (Sun-2, Sun-3, Sun-4c, UltraSPARC)
-- [gxemul](https://github.com/rpajarola/gxemul): GXemul, with SIMH tapes, TURBOchannel ROMs and L2TPv3
+- [gobootd](https://github.com/rpajarola/gobootd/releases): boot server for old and unusual machines
+- [tme](https://github.com/rpajarola/tme/releases): The Machine Emulator (Sun-2, Sun-3, Sun-4c, UltraSPARC)
+- [gxemul](https://github.com/rpajarola/gxemul/releases): GXemul, with SIMH tapes, TURBOchannel ROMs and L2TPv3
 
 ## Use
 
