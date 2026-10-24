@@ -35,6 +35,13 @@ the repository, and deploys it to GitHub Pages. It runs:
 - by hand (Actions → publish → Run workflow), e.g. after changing a
   release's assets.
 
+Each project also gets a page, `<package>/`, linked from the index: its
+README and its manual pages (files named `<name>.<section>` in a `man`
+directory), rendered to HTML by [`project-pages.sh`](project-pages.sh).
+Both come from the project's default branch as of the last publish run,
+so they may be ahead of the packaged version. [`site.css`](site.css)
+styles the index and the project pages.
+
 To add a project, add it and its package name to `sources.txt`, and give
 its release workflow the same `apt` job as gobootd's.
 
@@ -55,8 +62,10 @@ its release workflow the same `apt` job as gobootd's.
    `rpajarola/homebrew-tap` only. The projects use it to trigger the
    publish workflow and to update their Homebrew formulas.
 
-Build the repository locally (with `apt-utils` and the key imported):
+Build the repository locally (with `apt-utils`, `mandoc`, `gh` and the key
+imported):
 
 ```
-GPG_KEY_ID=<fingerprint> ./apt-repo.sh <dir-with-debs> site
+./project-pages.sh pages
+GPG_KEY_ID=<fingerprint> PAGES_DIR=pages ./apt-repo.sh <dir-with-debs> site
 ```

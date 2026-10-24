@@ -8,6 +8,9 @@
 # Usage:
 #   GPG_KEY_ID=<fingerprint> ./apt-repo.sh <deb-dir> <out-dir>
 #
+# With PAGES_DIR set to the output of project-pages.sh, the project pages
+# are copied into the site and the index links each package to its page.
+#
 # <out-dir> is wiped and recreated. Users add the result with:
 #   deb [signed-by=/usr/share/keyrings/rpajarola.gpg] <url> stable main
 set -euo pipefail
@@ -19,6 +22,9 @@ fi
 DEB_DIR="$(cd "$1" && pwd)"
 OUT="$2"
 SOURCES="$(cd "$(dirname "$0")" && pwd)/sources.txt"
+if [ -n "${PAGES_DIR:-}" ]; then
+  PAGES_DIR="$(cd "$PAGES_DIR" && pwd)"
+fi
 
 NAME=rpajarola
 SUITE=stable
@@ -62,6 +68,11 @@ gpg --batch --yes --local-user "$GPG_KEY_ID" --armor --detach-sign \
 gpg --batch --yes --local-user "$GPG_KEY_ID" --clearsign \
   --output "dists/$SUITE/InRelease" "dists/$SUITE/Release"
 
+cp "$(dirname "$SOURCES")/site.css" .
+if [ -n "${PAGES_DIR:-}" ]; then
+  cp -R "$PAGES_DIR"/. .
+fi
+
 # Public key, binary (for /usr/share/keyrings) and armored.
 gpg --batch --export "$GPG_KEY_ID" > "$NAME.gpg"
 gpg --batch --armor --export "$GPG_KEY_ID" > "$NAME.asc"
@@ -80,29 +91,7 @@ done | sort -u -k1,1 -k2,2V | awk '{v[$1]=$2} END {for (p in v) print p, v[p]}' 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>$NAME apt repository</title>
-<style>
-  :root { --bg: #f6f3ec; --fg: #1f1d1a; --muted: #6b665d; --card: #fffdf8; --line: #e2dccf; --accent: #b5530f; --code-bg: #efe9dc; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #12110f; --fg: #ece6da; --muted: #9a9284; --card: #1b1a17; --line: #2e2b26; --accent: #f0a04b; --code-bg: #0c0b0a; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  main { max-width: 760px; margin: 0 auto; padding: 40px 16px; }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .home { font-size: 14px; }
-  h1 { font-size: 32px; line-height: 1.15; margin: 16px 0 8px; letter-spacing: -.01em; }
-  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 32px 0 12px; }
-  p { margin: 0 0 12px; }
-  .muted { color: var(--muted); }
-  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  td { padding: 10px 14px; border-top: 1px solid var(--line); }
-  tr:first-child td { border-top: 0; }
-  td.v { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; color: var(--muted); }
-  td.r { text-align: right; white-space: nowrap; }
-  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; }
-  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
-</style>
+<link rel="stylesheet" href="site.css">
 </head>
 <body>
 <main>
@@ -115,7 +104,9 @@ HTML
   while read -r p v; do
     repo=$(awk -v p="$p" '!/^#/ && $2 == p {print $1; exit}' "$SOURCES")
     repo=${repo:-rpajarola/$p}
-    echo "<tr><td><a href=\"https://github.com/$repo\">$p</a></td><td class=\"v\">$v</td><td class=\"r\"><a href=\"https://github.com/$repo/releases\">releases</a></td></tr>"
+    link="https://github.com/$repo"
+    [ -e "$p/index.html" ] && link="$p/"
+    echo "<tr><td><a href=\"$link\">$p</a></td><td class=\"v\">$v</td><td class=\"r\"><a href=\"https://github.com/$repo/releases\">releases</a></td></tr>"
   done <<< "$packages"
   cat <<HTML
 </table>

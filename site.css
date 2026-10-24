@@ -1,0 +1,52 @@
+/* Shared by the index page (apt-repo.sh) and the project pages
+   (project-pages.sh). */
+:root { --bg: #f6f3ec; --fg: #1f1d1a; --muted: #6b665d; --card: #fffdf8; --line: #e2dccf; --accent: #b5530f; --code-bg: #efe9dc; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #12110f; --fg: #ece6da; --muted: #9a9284; --card: #1b1a17; --line: #2e2b26; --accent: #f0a04b; --code-bg: #0c0b0a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 40px 16px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.home { font-size: 14px; }
+h1 { font-size: 32px; line-height: 1.15; margin: 16px 0 8px; letter-spacing: -.01em; }
+h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 32px 0 12px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+td { padding: 10px 14px; border-top: 1px solid var(--line); }
+tr:first-child td { border-top: 0; }
+td.v { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; color: var(--muted); }
+td.r { text-align: right; white-space: nowrap; }
+pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-x: auto; }
+footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+
+/* Project pages: the manual page list, the README and manual pages. */
+ul.mans { padding-left: 20px; margin: 0; }
+.man { margin-top: 16px; }
+.doc, .man { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 24px 16px; overflow-wrap: break-word; }
+.doc h1, .doc h2, .doc h3, .doc h4, .man h1, .man h2 { font-size: revert; text-transform: none; letter-spacing: normal; color: var(--fg); margin: 24px 0 8px; line-height: 1.25; }
+.doc h1 { font-size: 28px; }
+.doc h2 { font-size: 22px; }
+.doc h3 { font-size: 18px; }
+.man h1 { font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+.man h2 { font-size: 15px; }
+.doc .markdown-heading { position: relative; }
+.doc a.anchor { display: none; }
+.man a.permalink { color: inherit; }
+.doc img { max-width: 100%; height: auto; }
+.doc table, .man table { width: auto; background: none; border: 0; border-radius: 0; }
+.doc table { border-collapse: collapse; margin: 0 0 12px; display: block; overflow-x: auto; }
+.doc th, .doc td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+.man td { border: 0; padding: 0 8px 0 0; vertical-align: top; }
+.man table.head, .man table.foot { width: 100%; color: var(--muted); font-size: 14px; }
+.man td.head-rtitle, .man td.foot-os { text-align: right; }
+.man td.head-vol { text-align: center; }
+code, .man .Nm, .man .Fl, .man .Cm { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; }
+:not(pre) > code { background: var(--code-bg); border-radius: 4px; padding: 1px 4px; }
+.man code { background: none; padding: 0; font-weight: 600; }
+.man dl { margin: 0 0 12px; }
+.man dt { margin-top: 8px; }
+.man dd { margin-left: 24px; }
+.man .Bd-indent { margin-left: 24px; }
