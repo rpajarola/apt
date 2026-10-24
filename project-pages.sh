@@ -120,7 +120,7 @@ HTML
       for m in "${mans[@]}"; do
         # The one-line description from the NAME section, after the dash.
         nd=$(cd "$work/man" && mandoc -T utf8 -O width=1000 "$m" 2>/dev/null | col -b |
-          awk '/^NAME/ {getline; print; exit}' | perl -CS -pe 's/^.*?\s[-\x{2013}\x{2014}]\s+//' | esc)
+          awk '/^NAME/ && !done {getline; print; done = 1}' | perl -CS -pe 's/^.*?\s[-\x{2013}\x{2014}]\s+//' | esc)
         echo "<li><a href=\"$m.html\">${m%.*}(${m##*.})</a>${nd:+ <span class=\"muted\">&mdash; $nd</span>}</li>"
       done
       echo "</ul>"
