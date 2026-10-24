@@ -5,3 +5,4 @@
 rpajarola/gobootd gobootd
 rpajarola/tme tme-rp
 rpajarola/gxemul gxemul-rp
+rpajarola/mirrortools mirrortools

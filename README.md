@@ -6,6 +6,7 @@ GitHub Pages at <https://rpajarola.github.io/apt>, with the packages of:
 - [gobootd](https://github.com/rpajarola/gobootd/releases): boot server for old and unusual machines
 - [tme-rp](https://github.com/rpajarola/tme/releases): The Machine Emulator (Sun-2, Sun-3, Sun-4c, UltraSPARC)
 - [gxemul-rp](https://github.com/rpajarola/gxemul/releases): GXemul, with SIMH tapes, TURBOchannel ROMs and L2TPv3
+- [mirrortools](https://github.com/rpajarola/mirrortools/releases): mirror HTTP, FTP, archive.org, IMAP, ... to disk
 
 ## Use
 
@@ -14,7 +15,7 @@ sudo curl -fsSLo /usr/share/keyrings/rpajarola.gpg https://rpajarola.github.io/a
 echo "deb [signed-by=/usr/share/keyrings/rpajarola.gpg] https://rpajarola.github.io/apt stable main" \
   | sudo tee /etc/apt/sources.list.d/rpajarola.list
 sudo apt update
-sudo apt install gobootd tme-rp gxemul-rp
+sudo apt install gobootd tme-rp gxemul-rp mirrortools
 ```
 
 The packages are built on Ubuntu 24.04.
